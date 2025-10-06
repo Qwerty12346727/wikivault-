@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Offline Wiki Vault PRO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --green:#4caf50;
+      --bg:#f4f4f4;
+    }
+    *{box-sizing:border-box;}
+    body{font-family:Arial,Helvetica,sans-serif;margin:0;background:var(--bg);padding:1rem;max-width:900px;margin-inline:auto;}
+    header{display:flex;gap:.5rem;align-items:center;margin-bottom:1rem;}
+    #search{flex:1;padding:.6rem;border:1px solid #aaa;border-radius:.5rem;font-size:1rem;}
+    button{padding:.6rem 1rem;border:none;border-radius:.5rem;background:var(--green);color:#fff;font-weight:bold;cursor:pointer;}
+    button:hover{opacity:.9;}
+    #suggestions{position:relative;}
+    #suggestions ul{position:absolute;top:100%;left:0;right:0;list-style:none;margin:0;padding:0;border:1px solid #aaa;background:#fff;max-height:220px;overflow:auto;z-index:10;}
+    #suggestions li{padding:.5rem;border-bottom:1px solid #eee;cursor:pointer;}
+    #suggestions li:last-child{border-bottom:none;}
+    #suggestions li:hover{background:#eef;}
+    #article h2{margin-top:1.2rem;}
+    img.thumb{max-width:100%;border-radius:.5rem;box-shadow:0 0 5px rgba(0,0,0,.2);margin-block:1rem;}
+    #library{margin-top:2rem;}
+    #library ul{list-style:none;padding:0;}
+    #library li{padding:.5rem;border-bottom:1px solid #ddd;cursor:pointer;}
+    #library li:hover{background:#eef;}
+    .hidden{display:none;}
+    .small{font-size:.9rem;padding:.4rem .6rem}
+  </style>
+</head>
+<body>
+  <header>
+    <div id="suggestions" style="flex:1;position:relative;">
+      <input id="search" type="text" placeholder="Search Wikipedia… (offline cache auto-saves)" />
+      <ul id="suggestList" class="hidden" aria-hidden="true"></ul>
+    </div>
+    <button id="go" class="small">Search</button>
+    <button id="libBtn" class="small" title="My Library">📚</button>
+  </header>
+
+  <div id="article" aria-live="polite"></div>
+  <div id="library" class="hidden" aria-hidden="true">
+    <h2>My Library (Saved Pages)</h2>
+    <ul id="libList"></ul>
+  </div>
+
+<script>
+/* Offline Wiki Vault PRO - keeps fetch + local cache (IndexedDB) features */
+const canon = s => String(s||'').trim().toLowerCase();
+let db;
+let savedTitles = [];
+
+function openDB(){
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('wikiVaultPro', 1);
+    req.onupgradeneeded = e => {
+      const idb = e.target.result;
+      if(!idb.objectStoreNames.contains('articles')){
+        idb.createObjectStore('articles', { keyPath: 'key' });
+      }
+    };
+    req.onsuccess = e => res(e.target.result);
+    req.onerror = e => rej(e);
+  });
+}
+function idbGet(key){
+  return new Promise((res, rej) => {
+    try {
+      const tx = db.transaction('articles','readonly').objectStore('articles').get(key);
+      tx.onsuccess = e => res(e.target.result);
+      tx.onerror = e => rej(e);
+    } catch(err){ rej(err); }
+  });
+}
+function idbPut(rec){
+  return new Promise((res, rej) => {
+    try {
+      const tx = db.transaction('articles','readwrite').objectStore('articles').put(rec);
+      tx.onsuccess = () => res();
+      tx.onerror = e => rej(e);
+    } catch(err){ rej(err); }
+  });
+}
+function idbAllKeys(){
+  return new Promise((res, rej) => {
+    try {
+      const keys = [];
+      const store = db.transaction('articles','readonly').objectStore('articles');
+      store.openCursor().onsuccess = e => {
+        const c = e.target.result;
+        if(c){ keys.push(c.key); c.continue(); } else res(keys);
+      };
+      store.openCursor().onerror = e => rej(e);
+    } catch(err){ rej(err); }
+  });
+}
+
+async function fetchWiki(title){
+  // fetch summary + mobile-html + image (if any) and return an object
+  const summaryRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`);
+  if(!summaryRes.ok) throw new Error('Network error (summary)');
+  const summary = await summaryRes.json();
+  const htmlRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/mobile-html/${encodeURIComponent(title)}`);
+  if(!htmlRes.ok) throw new Error('Network error (html)');
+  const html = await htmlRes.text();
+  let imgData = null;
+  if(summary.originalimage && summary.originalimage.source){
+    try{
+      const blob = await (await fetch(summary.originalimage.source)).blob();
+      imgData = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(blob); });
+    }catch(e){ console.warn('Img fetch fail', e); }
+  }
+  return { title: summary.title || title, extract: summary.extract || '', html, img: imgData, stored: Date.now() };
+}
+
+const articleDiv = document.getElementById('article');
+function renderArticle(rec){
+  articleDiv.innerHTML = '';
+  const h2 = document.createElement('h2'); h2.textContent = rec.title; articleDiv.appendChild(h2);
+  if(rec.img){
+    const img = document.createElement('img'); img.src = rec.img; img.alt = rec.title; img.className = 'thumb'; articleDiv.appendChild(img);
+  }
+  const p = document.createElement('p'); p.textContent = rec.extract || ''; articleDiv.appendChild(p);
+  const btn = document.createElement('button'); btn.textContent = 'Read full article'; btn.onclick = () => {
+    const w = window.open('','_blank');
+    w.document.write(`<html><head><meta charset="utf-8"><title>${rec.title}</title></head><body>${rec.html}</body></html>`);
+    w.document.close();
+  };
+  articleDiv.appendChild(btn);
+
+  const saveBtn = document.createElement('button'); saveBtn.textContent = 'Save to library'; saveBtn.style.marginLeft = '0.6rem';
+  saveBtn.onclick = async () => {
+    try {
+      const key = canon(rec.title);
+      rec.key = key;
+      await idbPut(rec);
+      if(!savedTitles.includes(key)){ savedTitles.push(key); }
+      alert('Saved to library');
+      refreshLibrary();
+    } catch(err){ console.error(err); alert('Save failed'); }
+  };
+  articleDiv.appendChild(saveBtn);
+}
+
+const suggestBox = document.getElementById('suggestList');
+function showSuggestions(q){
+  const query = canon(q);
+  if(!query){ suggestBox.classList.add('hidden'); return; }
+  const matches = savedTitles.filter(t => t.includes(query)).slice(0,10);
+  if(!matches.length){ suggestBox.classList.add('hidden'); return; }
+  suggestBox.innerHTML = '';
+  matches.forEach(m => { const li = document.createElement('li'); li.textContent = m; li.onclick = () => { search(m); }; suggestBox.appendChild(li); });
+  suggestBox.classList.remove('hidden');
+}
+
+const libBtn = document.getElementById('libBtn');
+const libDiv = document.getElementById('library');
+const libList = document.getElementById('libList');
+function refreshLibrary(){
+  libList.innerHTML = '';
+  savedTitles.sort().forEach(t => {
+    const li = document.createElement('li');
+    li.textContent = t;
+    li.onclick = () => search(t);
+    libList.appendChild(li);
+  });
+}
+libBtn.onclick = () => { libDiv.classList.toggle('hidden'); refreshLibrary(); };
+
+async function search(raw){
+  const query = String(raw||'').trim();
+  if(!query) return;
+  document.getElementById('search').value = query;
+  suggestBox.classList.add('hidden');
+  const key = canon(query);
+  let rec = await idbGet(key);
+  if(rec){ renderArticle(rec); return; }
+  try{
+    rec = await fetchWiki(query);
+    rec.key = key;
+    await idbPut(rec);
+    if(!savedTitles.includes(key)) savedTitles.push(key);
+    renderArticle(rec);
+  }catch(err){
+    console.error(err);
+    alert('Could not fetch from Wikipedia. Are you offline or did the request fail?');
+  }
+}
+
+(async ()=>{
+  try{
+    db = await openDB();
+    savedTitles = await idbAllKeys();
+  }catch(e){
+    console.error('IndexedDB open failed', e);
+  }
+  document.getElementById('go').onclick = () => search(document.getElementById('search').value);
+  document.getElementById('search').addEventListener('keydown', e => { if(e.key === 'Enter') search(e.target.value); });
+  document.getElementById('search').addEventListener('input', e => showSuggestions(e.target.value));
+  // register minimal service worker to allow offline open of saved pages (not aggressive caching)
+  if('serviceWorker' in navigator){
+    const swCode = `
+      self.addEventListener('install', event => { self.skipWaiting(); });
+      self.addEventListener('activate', event => { event.waitUntil(self.clients.claim()); });
+      // basic fetch handler: try network, fallback to cache (no pre-cache here)
+      self.addEventListener('fetch', event => {
+        event.respondWith(fetch(event.request).catch(()=>caches.match(event.request)));
+      });
+    `;
+    try{
+      const swBlob = new Blob([swCode], { type: 'text/javascript' });
+      const swUrl = URL.createObjectURL(swBlob);
+      navigator.serviceWorker.register(swUrl).catch(()=>{ /* ignore */ });
+    }catch(err){ console.warn('Service worker registration failed', err); }
+  }
+})();
+</script>
+</body>
+</html>

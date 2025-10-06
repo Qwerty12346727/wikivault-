@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Offline Wiki Vault PRO — Ultra AI (Dark)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --panel:#0f1720;
+      --muted:#9aa6b2;
+      --accent:#39d353;
+      --accent-2:#3aa0ff;
+      --card:#0c1318;
+      --glass: rgba(255,255,255,0.03);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;padding:0;background:linear-gradient(180deg,#041018 0%, #07121a 100%);color:#dbe9f2;font-family:Inter, system-ui, Arial, Helvetica, sans-serif}
+    .app{
+      max-width:980px;margin:0 auto;padding:10px;
+    }
+    header{
+      display:flex;gap:8px;align-items:center;margin-bottom:8px;
+      background:var(--panel);padding:8px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.5);
+      position:sticky;top:8px;z-index:30;
+    }
+    #search{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:var(--card);color:inherit;font-size:16px}
+    .btn{padding:8px 10px;border-radius:8px;border:none;background:linear-gradient(180deg,var(--accent),#2aa84a);color:#02120a;font-weight:700;cursor:pointer}
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:600}
+    .btn.small{padding:6px 8px;font-size:13px}
+    #suggestions{position:relative;flex:1}
+    #suggestList{position:absolute;left:0;right:0;top:44px;background:var(--card);border-radius:8px;max-height:220px;overflow:auto;border:1px solid rgba(255,255,255,0.03);display:none;padding:4px}
+    #suggestList li{padding:8px;border-radius:6px;list-style:none;cursor:pointer;color:var(--muted)}
+    #suggestList li:hover{background:rgba(255,255,255,0.02);color:#fff}
+    .controls{display:flex;gap:8px;align-items:center}
+    main{display:flex;gap:10px;align-items:flex-start}
+    /* layout adapted for phone: stack panels */
+    @media(min-width:720px){
+      main{flex-direction:row}
+      #article{flex:2;min-height:300px;background:var(--glass);padding:10px;border-radius:8px}
+      #side{flex:1;min-width:240px;background:var(--panel);padding:10px;border-radius:8px;max-height:75vh;overflow:auto}
+    }
+    @media(max-width:719px){
+      main{flex-direction:column}
+      #article{width:100%;background:var(--glass);padding:10px;border-radius:8px}
+      #side{width:100%;background:var(--panel);padding:8px;border-radius:8px}
+    }
+    h2{margin:6px 0 10px 0;color:#e6f7ff}
+    img.thumb{max-width:100%;border-radius:8px;margin:8px 0;display:block}
+    p{color:var(--muted);line-height:1.4}
+    #library{margin-top:8px}
+    #libList{list-style:none;padding:0;margin:0;max-height:45vh;overflow:auto}
+    #libList li{padding:8px;border-radius:6px;margin-bottom:6px;background:transparent;border:1px solid rgba(255,255,255,0.02);cursor:pointer;color:var(--muted)}
+    #libList li:hover{background:rgba(255,255,255,0.02);color:#fff}
+    .hidden{display:none}
+    #aiStatus{font-size:13px;color:var(--muted);margin-left:6px}
+    #progressBar{width:100%;height:10px;background:rgba(255,255,255,0.04);border-radius:6px;overflow:hidden;margin-top:6px}
+    #progressFill{height:100%;background:linear-gradient(90deg,var(--accent-2),var(--accent));width:0%}
+    footer{margin-top:12px;color:var(--muted);font-size:12px;text-align:center}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div id="suggestions" style="flex:1;position:relative">
+        <input id="search" type="text" placeholder="Search Wikipedia… (offline cache auto-saves)" autocomplete="off"/>
+        <ul id="suggestList" aria-hidden="true"></ul>
+      </div>
+      <div class="controls">
+        <button id="go" class="btn small">Search</button>
+        <button id="libBtn" class="btn secondary small" title="My Library">Library</button>
+      </div>
+      <div id="aiStatus" aria-live="polite">AI: idle</div>
+    </header>
+
+    <main>
+      <section id="article" aria-live="polite">
+        <p style="color:var(--muted)">Search a topic above or open your library to read saved pages.</p>
+      </section>
+
+      <aside id="side">
+        <div id="library" class="hidden">
+          <h2>My Library (Saved Pages)</h2>
+          <ul id="libList"></ul>
+          <div id="aiControls" style="margin-top:8px;display:none">
+            <button id="aiTestBtn" class="btn small">Run AI Tests (150)</button>
+            <div id="progressBar" class="hidden"><div id="progressFill"></div></div>
+          </div>
+        </div>
+        <div id="help" style="color:var(--muted);font-size:13px">
+          <p><strong>Tip:</strong> Save pages to build a local knowledge library. Open Library to run AI tests.</p>
+        </div>
+      </aside>
+    </main>
+
+    <footer>Offline Wiki Vault PRO — Ultra AI (Dark). Made with ❤️</footer>
+  </div>
+
+<script>
+/* Mobile-fitted Ultra AI version
+   - keeps online fetch + offline cache
+   - AI test button only appears when library is opened
+   - stronger fuzzy matching, synonyms, plural/tenses handling
+   - 150-test harness with progress
+*/
+
+const canon = s => String(s||'').trim().toLowerCase();
+let db;
+let savedTitles = [];
+
+/* IndexedDB helpers */
+function openDB(){
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('wikiVaultPro', 1);
+    req.onupgradeneeded = e => {
+      const idb = e.target.result;
+      if(!idb.objectStoreNames.contains('articles')){
+        idb.createObjectStore('articles', { keyPath: 'key' });
+      }
+    };
+    req.onsuccess = e => res(e.target.result);
+    req.onerror = e => rej(e);
+  });
+}
+function idbGet(key){
+  return new Promise((res, rej) => {
+    try {
+      const tx = db.transaction('articles','readonly').objectStore('articles').get(key);
+      tx.onsuccess = e => res(e.target.result);
+      tx.onerror = e => rej(e);
+    } catch(err){ rej(err); }
+  });
+}
+function idbPut(rec){
+  return new Promise((res, rej) => {
+    try {
+      const tx = db.transaction('articles','readwrite').objectStore('articles').put(rec);
+      tx.onsuccess = () => res();
+      tx.onerror = e => rej(e);
+    } catch(err){ rej(err); }
+  });
+}
+function idbAllKeys(){
+  return new Promise((res, rej) => {
+    try {
+      const keys = [];
+      const store = db.transaction('articles','readonly').objectStore('articles');
+      store.openCursor().onsuccess = e => {
+        const c = e.target.result;
+        if(c){ keys.push(c.key); c.continue(); } else res(keys);
+      };
+      store.openCursor().onerror = e => rej(e);
+    } catch(err){ rej(err); }
+  });
+}
+
+/* Fetch wiki */
+async function fetchWiki(title){
+  const summaryRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`);
+  if(!summaryRes.ok) throw new Error('Network error (summary)');
+  const summary = await summaryRes.json();
+  const htmlRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/mobile-html/${encodeURIComponent(title)}`);
+  if(!htmlRes.ok) throw new Error('Network error (html)');
+  const html = await htmlRes.text();
+  let imgData = null;
+  if(summary.originalimage && summary.originalimage.source){
+    try{
+      const blob = await (await fetch(summary.originalimage.source)).blob();
+      imgData = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(blob); });
+    }catch(e){ console.warn('Img fetch fail', e); }
+  }
+  return { title: summary.title || title, extract: summary.extract || '', html, img: imgData, stored: Date.now() };
+}
+
+/* Render article */
+const articleDiv = document.getElementById('article');
+function renderArticle(rec){
+  articleDiv.innerHTML = '';
+  const h2 = document.createElement('h2'); h2.textContent = rec.title; articleDiv.appendChild(h2);
+  if(rec.img){
+    const img = document.createElement('img'); img.src = rec.img; img.alt = rec.title; img.className = 'thumb'; articleDiv.appendChild(img);
+  }
+  const p = document.createElement('p'); p.textContent = rec.extract || ''; articleDiv.appendChild(p);
+  const btn = document.createElement('button'); btn.textContent = 'Read full article'; btn.className='btn small';
+  btn.onclick = () => {
+    const w = window.open('','_blank');
+    w.document.write(`<html><head><meta charset="utf-8"><title>${rec.title}</title></head><body>${rec.html}</body></html>`);
+    w.document.close();
+  };
+  articleDiv.appendChild(btn);
+
+  const saveBtn = document.createElement('button'); saveBtn.textContent = 'Save to library'; saveBtn.className='btn small';
+  saveBtn.style.marginLeft='8px';
+  saveBtn.onclick = async () => {
+    try {
+      const key = canon(rec.title);
+      rec.key = key;
+      await idbPut(rec);
+      if(!savedTitles.includes(key)){ savedTitles.push(key); savedTitles.sort(); }
+      showToast('Saved to library');
+      refreshLibrary();
+    } catch(err){ console.error(err); showToast('Save failed'); }
+  };
+  articleDiv.appendChild(saveBtn);
+}
+
+/* Suggestions UI */
+const suggestList = document.getElementById('suggestList');
+function showSuggestions(q){
+  const query = canon(q);
+  if(!query){ suggestList.style.display='none'; return; }
+  const matches = savedTitles.filter(t => t.includes(query)).slice(0,8);
+  // also include ai suggestions
+  const ai = aiFindBestMatch(query);
+  const items = new Set(matches);
+  if(ai) items.add(ai);
+  const arr = Array.from(items).slice(0,8);
+  if(!arr.length){ suggestList.style.display='none'; return; }
+  suggestList.innerHTML = '';
+  arr.forEach(a=>{ const li=document.createElement('li'); li.textContent=a; li.onclick=()=>search(a); suggestList.appendChild(li); });
+  suggestList.style.display='block';
+}
+
+/* Improved fuzzy matching: Damerau-Levenshtein optimized for short strings */
+function damerauLevenshtein(a,b){
+  if(a===b) return 0;
+  const da = {};
+  const la=a.length, lb=b.length;
+  const INF = la + lb;
+  const H = Array(la+2).fill(0).map(()=>Array(lb+2).fill(0));
+  H[0][0]=INF;
+  for(let i=0;i<=la;i++){ H[i+1][1]=i; H[i+1][0]=INF; }
+  for(let j=0;j<=lb;j++){ H[1][j+1]=j; H[0][j+1]=INF; }
+  for(let i=1;i<=la;i++){
+    let db=0;
+    for(let j=1;j<=lb;j++){
+      const i1 = da[b[j-1]]||0;
+      const j1 = db;
+      let cost = 1;
+      if(a[i-1]===b[j-1]){ cost=0; db=j; }
+      H[i+1][j+1] = Math.min(
+        H[i][j]+cost,
+        H[i+1][j]+1,
+        H[i][j+1]+1,
+        H[i1][j1] + (i - i1 -1) + 1 + (j - j1 -1)
+      );
+    }
+    da[a[i-1]] = i;
+  }
+  return H[la+1][lb+1];
+}
+function similarity(a,b){
+  a = String(a||'').toLowerCase();
+  b = String(b||'').toLowerCase();
+  if(a===b) return 1;
+  const maxl = Math.max(a.length,b.length);
+  if(maxl===0) return 1;
+  const d = damerauLevenshtein(a,b);
+  return Math.max(0, 1 - d / maxl);
+}
+
+/* smarter normalization (singular/plural, common endings) */
+function normalizeWord(w){
+  w = w.replace(/[^a-z0-9\s]/gi,'').toLowerCase();
+  // simple stemming: remove common suffixes
+  w = w.replace(/(ing|ed|es|s)$/,'');
+  return w;
+}
+
+/* expanded synonyms */
+const synonyms = {
+  "car":["automobile","vehicle","auto"],
+  "happy":["happiness","joy","joyful","glad"],
+  "computer":["computing","pc","computer science","laptop"],
+  "dog":["canine","puppy","hound"],
+  "cat":["feline","kitty"],
+  "walk":["stroll","walks","hike"],
+  "ocean":["sea","marine"],
+  "music":["song","melody","tune"],
+  "piano":["keyboard"]
+};
+
+/* AI search: finds best match in savedTitles */
+function aiFindBestMatch(query){
+  if(!query) return null;
+  const q = normalizeWord(query);
+  // direct contains
+  const contains = savedTitles.find(t => t.includes(q));
+  if(contains) return contains;
+  // synonym expansion
+  for(const [k,arr] of Object.entries(synonyms)){
+    if(q.includes(k)){
+      for(const s of arr){
+        const f = savedTitles.find(t => t.includes(s));
+        if(f) return f;
+      }
+    }
+  }
+  // fuzzy scan limited pool for performance
+  const pool = savedTitles.slice(0,5000);
+  let best=null; let bestScore=0;
+  for(const t of pool){
+    const score = similarity(normalizeWord(t), q);
+    if(score>bestScore){ bestScore=score; best=t; }
+    if(bestScore===1) break;
+  }
+  if(bestScore>=0.62) return best;
+  return null;
+}
+
+/* library UI */
+const libBtn = document.getElementById('libBtn');
+const libDiv = document.getElementById('library');
+const libList = document.getElementById('libList');
+const aiControls = document.getElementById('aiControls');
+const aiStatus = document.getElementById('aiStatus');
+const progressBar = document.getElementById('progressBar');
+const progressFill = document.getElementById('progressFill');
+
+function refreshLibrary(){
+  libList.innerHTML='';
+  savedTitles.sort().forEach(t=>{
+    const li=document.createElement('li'); li.textContent=t; li.onclick=()=>search(t);
+    libList.appendChild(li);
+  });
+}
+
+/* show/hide library and AI button logic */
+libBtn.onclick = ()=>{
+  const help = document.getElementById('help');
+  libDiv.classList.toggle('hidden');
+  help.style.display = libDiv.classList.contains('hidden') ? 'block' : 'none';
+  if(!libDiv.classList.contains('hidden')){
+    refreshLibrary();
+    // show aiControls if library open
+    aiControls.style.display = 'block';
+  } else {
+    aiControls.style.display = 'none';
+  }
+};
+
+/* search flow with AI fallback */
+async function search(raw){
+  const query = String(raw||'').trim();
+  if(!query) return;
+  document.getElementById('search').value = query;
+  suggestList.style.display='none';
+  const key = canon(query);
+  let rec = await idbGet(key);
+  if(rec){ renderArticle(rec); return; }
+  // AI fallback
+  const aiKey = aiFindBestMatch(query);
+  if(aiKey && aiKey !== key){
+    try{
+      const r = await idbGet(aiKey);
+      if(r){ renderArticle(r); return; }
+      const fetched = await fetchWiki(aiKey);
+      fetched.key = aiKey;
+      await idbPut(fetched);
+      if(!savedTitles.includes(aiKey)) savedTitles.push(aiKey);
+      renderArticle(fetched);
+      return;
+    }catch(err){ console.warn('AI fallback fetch failed', err); }
+  }
+  // final network fetch
+  try{
+    const recNet = await fetchWiki(query);
+    recNet.key = key;
+    await idbPut(recNet);
+    if(!savedTitles.includes(key)) savedTitles.push(key);
+    renderArticle(recNet);
+  }catch(err){
+    console.error(err);
+    showToast('Could not fetch from Wikipedia. Are you offline?');
+  }
+}
+
+/* tiny toast */
+function showToast(msg){
+  const t = document.createElement('div');
+  t.textContent = msg; t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)';
+  t.style.bottom='18px'; t.style.background='rgba(0,0,0,0.7)'; t.style.padding='10px 14px'; t.style.borderRadius='8px';
+  t.style.color='#fff'; t.style.zIndex=9999; document.body.appendChild(t);
+  setTimeout(()=>t.style.opacity=0,1800); setTimeout(()=>t.remove(),2300);
+}
+
+/* misspelling generator */
+function randomEdit(word){
+  if(!word) return word;
+  const ops=['del','ins','sub','trans'];
+  const op=ops[Math.floor(Math.random()*ops.length)];
+  const i=Math.floor(Math.random()*Math.max(1,word.length));
+  const letters='abcdefghijklmnopqrstuvwxyz';
+  if(op==='del') return word.slice(0,i)+word.slice(i+1);
+  if(op==='ins') return word.slice(0,i)+letters[Math.floor(Math.random()*letters.length)]+word.slice(i);
+  if(op==='sub') return word.slice(0,i)+letters[Math.floor(Math.random()*letters.length)]+word.slice(i+1);
+  if(op==='trans' && word.length>1){
+    const j = Math.min(word.length-1, i+1);
+    const arr = word.split('');
+    const tmp = arr[i]; arr[i]=arr[j]; arr[j]=tmp;
+    return arr.join('');
+  }
+  return word;
+}
+
+/* 150-test harness with progress update */
+async function runAITests(N=150){
+  aiStatus.textContent='AI: testing...';
+  progressBar.classList.remove('hidden');
+  progressFill.style.width='0%';
+  await new Promise(r=>setTimeout(r,50));
+  const pool = savedTitles.length ? savedTitles.slice() : ['happiness','computer','banana','cat','dog','physics','mars','ocean','music','piano','gravity','electricity','biology','chemistry','earth'];
+  let successes=0;
+  const results=[];
+  for(let i=0;i<N;i++){
+    const original = pool[Math.floor(Math.random()*pool.length)];
+    let miss = original;
+    const edits = 1 + Math.floor(Math.random()*3);
+    for(let e=0;e<edits;e++) miss = randomEdit(miss);
+    const found = aiFindBestMatch(miss);
+    const ok = found === original;
+    if(ok) successes++;
+    results.push({i,original,miss,found,ok});
+    // update progress
+    progressFill.style.width = Math.round(((i+1)/N)*100) + '%';
+    if(i%10===0) await new Promise(r=>setTimeout(r,20));
+  }
+  aiStatus.textContent = `AI: ${successes}/${N} exact hits`;
+  progressBar.classList.add('hidden');
+  console.log('AI test results', results);
+  showToast(`AI tests finished — ${successes}/${N} exact hits`);
+  return {successes,results};
+}
+
+/* wiring + service worker */
+(async ()=>{
+  try{ db = await openDB(); savedTitles = await idbAllKeys(); }catch(e){ console.error('IndexedDB open failed', e); }
+  document.getElementById('go').onclick = ()=> search(document.getElementById('search').value);
+  document.getElementById('search').addEventListener('keydown', e=>{ if(e.key==='Enter') search(e.target.value); });
+  document.getElementById('search').addEventListener('input', e=> showSuggestions(e.target.value));
+  document.getElementById('aiTestBtn').onclick = ()=> runAITests(150);
+  if('serviceWorker' in navigator){
+    const swCode = `self.addEventListener('install', e=>self.skipWaiting());self.addEventListener('activate', e=>e.waitUntil(self.clients.claim()));self.addEventListener('fetch', e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));});`;
+    try{ const swBlob = new Blob([swCode], {type:'text/javascript'}); const swUrl = URL.createObjectURL(swBlob); navigator.serviceWorker.register(swUrl).catch(()=>{}); }catch(err){ console.warn('SW failed',err); }
+  }
+})();
+</script>
+</body>
+</html>
