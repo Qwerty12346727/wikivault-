@@ -1,0 +1,20 @@
+{
+  "background_color": "#000000",
+  "dir": "ltr",
+  "display": "fullscreen",
+  "name": "wikivault.dpdns",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Wiki-Vault",
+  "start_url": "/http://wikivault.dpdns.org/",
+  "theme_color": "#000000",
+  "id": "1231234123456",
+  "display_override": [
+    "fullscreen",
+    "window-controls-overlay"
+  ],
+  "categories": [
+    "education"
+  ],
+  "description": "# Wikivault\n\nWiki Vault — The Ultimate Offline Knowledge Vault\nDiscover. Learn. Unlock.\n\nWiki Vault is your personal treasure chest of knowledge — built to work anywhere, anytime, even offline🌐!\nBrowse fascinating facts, deep articles, and amazing discoveries all packed into one powerful, easy-to-use vault.\n\nFeatures:\n- Works fully offline when you save pages to your library — no internet needed📝🚫🌐!\n- Beautiful dark interface for comfy reading anytime🕛🕞.\n- Quick access to science, history, and fun facts💭.\n- Fast search that finds info in seconds.\n- Save, read, and explore your own articles📝.\n- AI-powered helpers for smarter searching and summaries🤖.\n- Searches the Wikipedia so answers are always updated🌐! \n\nCreated by Qwerty12346727, Wiki Vault is the ultimate app for curious minds who love to learn — powered by creativity, organized with precision, and inspired by God’s wonderful creation. 🙏✨\n\nWhether you're studying, exploring, or just curious, Wiki Vault is your secret lab of knowledge🧠!\n\nPS: When searching here search like you would search the Wikipedia🔎!"
+}
