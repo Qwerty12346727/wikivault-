@@ -1,7 +1,7 @@
 {
   "background_color": "#000000",
   "dir": "ltr",
-  "display": "fullscreen",
+  "display": "standalone",
   "name": "wikivault.dpdns",
   "orientation": "any",
   "scope": "/",
