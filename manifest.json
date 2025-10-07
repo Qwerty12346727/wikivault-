@@ -2,15 +2,15 @@
   "background_color": "#000000",
   "dir": "ltr",
   "display": "standalone",
-  "name": "wikivault.dpdns",
+  "name": "Wikivault",
   "orientation": "any",
   "scope": "/",
-  "short_name": "Wiki-Vault",
+  "short_name": "Wikivault",
   "start_url": "/http://wikivault.dpdns.org/",
   "theme_color": "#000000",
   "id": "1231234123456",
   "display_override": [
-    "fullscreen",
+    "standalone",
     "window-controls-overlay"
   ],
   "categories": [
