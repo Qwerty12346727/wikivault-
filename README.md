@@ -18,3 +18,5 @@ Features:
 Created by Qwerty12346727, Wiki Vault is the ultimate app for curious minds who love to learn — powered by creativity, organized with precision, and inspired by God’s wonderful creation. 🙏✨
 
 Whether you're studying, exploring, or just curious, Wiki Vault is your secret lab of knowledge🧠!
+
+PS: When searching here search like you would search the Wikipedia🔎!
