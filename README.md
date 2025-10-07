@@ -22,3 +22,8 @@ Whether you're studying, exploring, or just curious, Wiki Vault is your secret l
 PS: When searching here search like you would search the Wikipedia🔎!
 
 Find it in https://wikivault.dpdns.org/
+
+---
+Wiki Vault © 2025 Qwerty12346727 
+License: Creative Commons Zero (CC0 1.0 Universal)  
+Built to be shared — learn, explore, remix freely. 
