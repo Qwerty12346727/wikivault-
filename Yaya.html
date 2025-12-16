@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <link rel="manifest" href="manifest.json">
-  <meta charset="utf-32" />
+  <meta charset="utf-8" />
   <title>NOPE HAHA 🤣🤣</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
@@ -13,29 +13,22 @@
       --accent:#39FFFF;
       --accent-2:#3FF0ff;
       --card:#FFF3FF;
-      --glass: rgba(100,255,101,100);
+      --glass: rgba(100,255,101,0.4);
     }
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;padding:0;background:linear-gradient(180deg,#FF72377F 0%, #fe62ff 100%);color:#f26e7fff;font-family:Inter, system-ui, Courier New, Helvetica, sans-serif}
-    .app{
-      max-width:980px;margin:0 auto;padding:10px;
-    }
-    header{
-      display:flex;gap:8px;align-items:center;margin-bottom:8px;
-      background:var(--panel);padding:8px;border-radius:10px;box-shadow:0 6px 18px rgba(255,255,255,100);
-      position:sticky;top:8px;z-index:30;
-    }
-    #search{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,255);background:var(--card);color:inherit;font-size:16px}
+    .app{max-width:980px;margin:0 auto;padding:10px;}
+    header{display:flex;gap:8px;align-items:center;margin-bottom:8px;background:var(--panel);padding:8px;border-radius:10px;box-shadow:0 6px 18px rgba(255,255,255,0.4);position:sticky;top:8px;z-index:30;}
+    #search{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.4);background:var(--card);color:inherit;font-size:16px}
     .btn{padding:8px 10px;border-radius:8px;border:none;background:linear-gradient(180deg,var(--accent),#2FF84a);color:#FFF5FF;font-weight:700;cursor:pointer}
-    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,255);color:var(--muted);font-weight:600}
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.4);color:var(--muted);font-weight:600}
     .btn.small{padding:6px 8px;font-size:13px}
     #suggestions{position:relative;flex:1}
     #suggestList{position:absolute;left:0;right:0;top:44px;background:var(--card);border-radius:8px;max-height:220px;overflow:auto;border:1px solid rgba(255,255,255,0.03);display:none;padding:4px}
     #suggestList li{padding:8px;border-radius:6px;list-style:none;cursor:pointer;color:var(--muted)}
-    #suggestList li:hover{background:rgba(255,255,255,255);color:#fff}
+    #suggestList li:hover{background:rgba(255,255,255,0.4);color:#fff;transform: rotate(-3deg) scale(1.05);transition: 0.2s all ease;}
     .controls{display:flex;gap:8px;align-items:center}
     main{display:flex;gap:10px;align-items:flex-start}
-    /* layout adapted for phone: stack panels */
     @media(min-width:720px){
       main{flex-direction:row}
       #article{flex:2;min-height:300px;background:var(--glass);padding:10px;border-radius:8px}
@@ -51,15 +44,11 @@
     p{color:var(--muted);line-height:1.4}
     #library{margin-top:8px}
     #libList{list-style:none;padding:0;margin:0;max-height:45vh;overflow:auto}
-    #libList li{padding:8px;border-radius:6px;margin-bottom:6px;background:transparent;border:1px solid rgba(255,255,255,255);cursor:pointer;color:var(--muted)}
-    #libList li:hover{background:rgba(255,255,255,255);color:#ffffff}
+    #libList li{padding:8px;border-radius:6px;margin-bottom:6px;background:transparent;border:1px solid rgba(255,255,255,0.4);cursor:pointer;color:var(--muted)}
+    #libList li:hover{background:rgba(255,255,255,0.4);color:#ffffff;transform: rotate(-3deg) scale(1.05);transition: 0.2s all ease;}
     .hidden{display:none}
-    #libList li:hover, #suggestList li:hover {
-  transform: rotate(-3deg) scale(1.05);
-  transition: 0.2s all ease;
-    }
     #aiStatus{font-size:13px;color:var(--muted);margin-left:6px}
-    #progressBar{width:100%;height:10px;background:rgba(255,255,255,255);border-radius:6px;overflow:hidden;margin-top:6px}
+    #progressBar{width:100%;height:10px;background:rgba(255,255,255,0.4);border-radius:6px;overflow:hidden;margin-top:6px}
     #progressFill{height:100%;background:linear-gradient(90deg,var(--accent-2),var(--accent));width:0%}
     footer{margin-top:12px;color:var(--muted);font-size:12px;text-align:center}
   </style>
@@ -67,29 +56,29 @@
 <body>
   <div class="app">
     <header>
-      <div id="suggestions" style="flex:1;position:relative">
+      <div id="suggestions">
         <input id="search" type="text" placeholder="Serauchert 😎 Kiwi betebatiya☕☕" autocomplete="off"/>
-        <ul id="suggestList" Courier New-live="true"></ul>
+        <ul id="suggestList"></ul>
       </div>
       <div class="controls">
         <button id="go" class="btn small">Courous🙃s</button>
         <button id="libBtn" class="btn secondary small" title="My Library">Kikooribary😭😨🤧</button>
       </div>
-      <div id="aiStatus" Courier New-live="polite">Arigitahal opsielegwnce 🤖🤖Idlee</div>
+      <div id="aiStatus">Arigitahal opsielegwnce 🤖🤖Idlee</div>
     </header>
 
     <main>
-      <section id="article" Courier New-live="polite">
-        <p style="color:var(--accent-2)"> Sreacher goglewi🔎🔎s</p>
+      <section id="article">
+        <p style="color:var(--accent-2)">Sreacher goglewi🔎🔎s</p>
       </section>
 
       <aside id="side">
         <div id="library" class="hidden">
-          <h2>My Librharyy (Sas HartiCles🗂</h2>
+          <h2>My Librharyy (Sas HartiCles🗂)</h2>
           <ul id="libList"></ul>
           <div id="aiControls" style="margin-top:8px;display:none">
             <button id="aiTestBtn" class="btn small">Run OOPSIE tESts</button>
-            <div id="progressBar" class="hidden"><div id="progressF🤕🤪ill"></div></div>
+            <div id="progressBar" class="hidden"><div id="progressFill"></div></div>
           </div>
         </div>
         <div id="help" style="color:var(--glass);font-size:13px">
@@ -102,18 +91,10 @@
   </div>
 
 <script>
-/* Mobile-fitted Ultra AI version
-   - keeps online fetch + offline cache
-   - AI test button only appears when library is opened
-   - stronger fuzzy matching, synonyms, plural/tenses handling
-   - 150-test harness with progress
-*/
-
 const canon = s => String(s||'').trim().toLowerCase();
 let db;
 let savedTitles = [];
 
-/* IndexedDB helpers */
 function openDB(){
   return new Promise((res, rej) => {
     const req = indexedDB.open('wikiVaultPro', 1);
@@ -159,7 +140,6 @@ function idbAllKeys(){
   });
 }
 
-/* Fetch wiki */
 async function fetchWiki(title){
   const summaryRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`);
   if(!summaryRes.ok) throw new Error('Network error (summary)');
@@ -177,17 +157,19 @@ async function fetchWiki(title){
   return { title: summary.title || title, extract: summary.extract || '', html, img: imgData, stored: Date.now() };
 }
 
-/* Render article */
 const articleDiv = document.getElementById('article');
 function renderArticle(rec){
   articleDiv.innerHTML = '';
   const h2 = document.createElement('h2');
-  h2.textContent = rec.title + "Hanatch dochenito🥳🤣";
+  h2.textContent = rec.title + " Hanatch dochenito🥳🤣";
+  articleDiv.appendChild(h2);
   if(rec.img){
     const img = document.createElement('img'); img.src = rec.img; img.alt = rec.title; img.className = 'thumb'; articleDiv.appendChild(img);
   }
-  const p = document.createElement('p'); p.textContent = rec.extract || ''; articleDiv.appendChild(p);
-  p.textContent = rec.extract + " 😂papadito😜";
+  const p = document.createElement('p'); 
+  p.textContent = rec.extract + " 😂papadito😜"; 
+  articleDiv.appendChild(p);
+
   const btn = document.createElement('button'); btn.textContent = 'Read full article'; btn.className='btn small';
   btn.onclick = () => {
     const w = window.open('','_blank');
@@ -211,13 +193,11 @@ function renderArticle(rec){
   articleDiv.appendChild(saveBtn);
 }
 
-/* Suggestions UI */
 const suggestList = document.getElementById('suggestList');
 function showSuggestions(q){
   const query = canon(q);
   if(!query){ suggestList.style.display='none'; return; }
   const matches = savedTitles.filter(t => t.includes(query)).slice(0,8);
-  // also include ai suggestions
   const ai = aiFindBestMatch(query);
   const items = new Set(matches);
   if(ai) items.add(ai);
@@ -228,7 +208,6 @@ function showSuggestions(q){
   suggestList.style.display='block';
 }
 
-/* Improved fuzzy matching: Damerau-Levenshtein optimized for short strings */
 function damerauLevenshtein(a,b){
   if(a===b) return 0;
   const da = {};
@@ -266,15 +245,12 @@ function similarity(a,b){
   return Math.max(0, 1 - d / maxl);
 }
 
-/* smarter normalization (singular/plural, common endings) */
 function normalizeWord(w){
   w = w.replace(/[^a-z0-9\s]/gi,'').toLowerCase();
-  // simple stemming: remove common suffixes
   w = w.replace(/(ing|ed|es|s)$/,'');
   return w;
 }
 
-/* expanded synonyms */
 const synonyms = {
   "car":["automobile","vehicle","auto"],
   "happy":["happiness","joy","joyful","glad"],
@@ -287,14 +263,11 @@ const synonyms = {
   "piano":["keyboard"]
 };
 
-/* AI search: finds best match in savedTitles */
 function aiFindBestMatch(query){
   if(!query) return null;
   const q = normalizeWord(query);
-  // direct contains
   const contains = savedTitles.find(t => t.includes(q));
   if(contains) return contains;
-  // synonym expansion
   for(const [k,arr] of Object.entries(synonyms)){
     if(q.includes(k)){
       for(const s of arr){
@@ -303,7 +276,6 @@ function aiFindBestMatch(query){
       }
     }
   }
-  // fuzzy scan limited pool for performance
   const pool = savedTitles.slice(0,5000);
   let best=null; let bestScore=0;
   for(const t of pool){
@@ -315,7 +287,6 @@ function aiFindBestMatch(query){
   return null;
 }
 
-/* library UI */
 const libBtn = document.getElementById('libBtn');
 const libDiv = document.getElementById('library');
 const libList = document.getElementById('libList');
@@ -332,21 +303,13 @@ function refreshLibrary(){
   });
 }
 
-/* show/hide library and AI button logic */
 libBtn.onclick = ()=>{
   const help = document.getElementById('help');
   libDiv.classList.toggle('hidden');
   help.style.display = libDiv.classList.contains('hidden') ? 'block' : 'none';
-  if(!libDiv.classList.contains('hidden')){
-    refreshLibrary();
-    // show aiControls if library open
-    aiControls.style.display = 'block';
-  } else {
-    aiControls.style.display = 'none';
-  }
+  aiControls.style.display = libDiv.classList.contains('hidden') ? 'none' : 'block';
 };
 
-/* search flow with AI fallback */
 async function search(raw){
   const query = String(raw||'').trim();
   if(!query) return;
@@ -355,7 +318,6 @@ async function search(raw){
   const key = canon(query);
   let rec = await idbGet(key);
   if(rec){ renderArticle(rec); return; }
-  // AI fallback
   const aiKey = aiFindBestMatch(query);
   if(aiKey && aiKey !== key){
     try{
@@ -369,7 +331,6 @@ async function search(raw){
       return;
     }catch(err){ console.warn('AI fallback fetch failed', err); }
   }
-  // final network fetch
   try{
     const recNet = await fetchWiki(query);
     recNet.key = key;
@@ -382,18 +343,17 @@ async function search(raw){
   }
 }
 
-/* tiny toast */
 function showToast(msg){
   const t = document.createElement('div');
-  t.textContent = msg; t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)';
   t.textContent = "papaDitomo " + msg + " Gritalococho🤪";
+  t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)';
   t.style.bottom='18px'; t.style.background='rgba(0,0,0,0.7)'; t.style.padding='10px 14px'; t.style.borderRadius='8px';
   t.style.color='#fff'; t.style.zIndex=9999; document.body.appendChild(t);
   setTimeout(()=>t.style.opacity=0,1800); setTimeout(()=>t.remove(),2300);
 }
 
-/* misspelling generator */
 function randomEdit(word){
+  if(!word) returnfunction randomEdit(word){
   if(!word) return word;
   const ops=['del','ins','sub','trans'];
   const op=ops[Math.floor(Math.random()*ops.length)];
@@ -411,7 +371,6 @@ function randomEdit(word){
   return word;
 }
 
-/* 150-test harness with progress update */
 async function runAITests(N=150){
   aiStatus.textContent='AI: testing...';
   progressBar.classList.remove('hidden');
@@ -429,7 +388,6 @@ async function runAITests(N=150){
     const ok = found === original;
     if(ok) successes++;
     results.push({i,original,miss,found,ok});
-    // update progress
     progressFill.style.width = Math.round(((i+1)/N)*100) + '%';
     if(i%10===0) await new Promise(r=>setTimeout(r,20));
   }
@@ -440,16 +398,28 @@ async function runAITests(N=150){
   return {successes,results};
 }
 
-/* wiring + service worker */
 (async ()=>{
-  try{ db = await openDB(); savedTitles = await idbAllKeys(); }catch(e){ console.error('IndexedDB open failed', e); }
+  try{ 
+    db = await openDB(); 
+    savedTitles = await idbAllKeys(); 
+  }catch(e){ console.error('IndexedDB open failed', e); }
+
   document.getElementById('go').onclick = ()=> search(document.getElementById('search').value);
   document.getElementById('search').addEventListener('keydown', e=>{ if(e.key==='Enter') search(e.target.value); });
   document.getElementById('search').addEventListener('input', e=> showSuggestions(e.target.value));
   document.getElementById('aiTestBtn').onclick = ()=> runAITests(150);
+
   if('serviceWorker' in navigator){
-    const swCode = `self.addEventListener('install', e=>self.skipWaiting());self.addEventListener('activate', e=>e.waitUntil(self.clients.claim()));self.addEventListener('fetch', e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));});`;
-    try{ const swBlob = new Blob([swCode], {type:'text/javascript'}); const swUrl = URL.createObjectURL(swBlob); navigator.serviceWorker.register(swUrl).catch(()=>{}); }catch(err){ console.warn('SW failed',err); }
+    const swCode = `
+      self.addEventListener('install', e=>self.skipWaiting());
+      self.addEventListener('activate', e=>e.waitUntil(self.clients.claim()));
+      self.addEventListener('fetch', e=>{ e.respondWith(fetch(e.request).catch(()=>caches.match(e.request))); });
+    `;
+    try{ 
+      const swBlob = new Blob([swCode], {type:'text/javascript'}); 
+      const swUrl = URL.createObjectURL(swBlob); 
+      navigator.serviceWorker.register(swUrl).catch(()=>{}); 
+    }catch(err){ console.warn('SW failed',err); }
   }
 })();
 </script>
