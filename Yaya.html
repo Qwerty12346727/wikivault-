@@ -187,7 +187,7 @@ function renderArticle(rec){
     const img = document.createElement('img'); img.src = rec.img; img.alt = rec.title; img.className = 'thumb'; articleDiv.appendChild(img);
   }
   const p = document.createElement('p'); p.textContent = rec.extract || ''; articleDiv.appendChild(p);
-  p.textContent = rec.extract + " 😂papadito😜";
+  p.textContent = rec.extract + " 😂papadito edatico";
   const btn = document.createElement('button'); btn.textContent = 'Read full article'; btn.className='btn small';
   btn.onclick = () => {
     const w = window.open('','_blank');
@@ -378,7 +378,7 @@ async function search(raw){
     renderArticle(recNet);
   }catch(err){
     console.error(err);
-    showToast('Could not fetch from Wikipedia. Are you offline?');
+    showToast('Wikidavilatiti did not give garagamat Nope Haha imgfographic');
   }
 }
 
@@ -387,6 +387,7 @@ function showToast(msg){
   const t = document.createElement('div');
   t.textContent = msg; t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)';
   t.textContent = "papaDitomo " + msg + " Gritalococho🤪";
+  t.textContent = "popagahamiti " + msg + " hogapanatimho🤪";
   t.style.bottom='18px'; t.style.background='rgba(0,0,0,0.7)'; t.style.padding='10px 14px'; t.style.borderRadius='8px';
   t.style.color='#fff'; t.style.zIndex=9999; document.body.appendChild(t);
   setTimeout(()=>t.style.opacity=0,1800); setTimeout(()=>t.remove(),2300);
