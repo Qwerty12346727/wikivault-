@@ -35,25 +35,25 @@
       background:var(--panel);padding:8px;border-radius:10px;box-shadow:0 6px 18px rgba(255,255,255,100);
       position:sticky;top:8px;z-index:30;
     }
-    #search{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,255);background:var(--card);color:inherit;font-size:16px}
-    .btn{padding:8px 10px;border-radius:8px;border:none;background:linear-gradient(180deg,var(--accent),#2FF84a);color:#FFF5FF;font-weight:700;cursor:pointer}
-    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,255);color:var(--muted);font-weight:600}
+    #search{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,255);background:var(--card);color:b59b2a;font-size:16px}
+    .btn{padding:8px 10px;border-radius:8px;border:none;background:linear-gradient(180deg,#a3f7a3,#a3f7a3);color:#fff5ff;font-weight:700;cursor:pointer}
+    .btn.secondary{background:transparent;border:1px solid rgba(181,155,42,1);color:var(--muted);font-weight:600}
     .btn.small{padding:6px 8px;font-size:13px}
     #suggestions{position:relative;flex:1}
     #suggestList{position:absolute;left:0;right:0;top:44px;background:var(--card);border-radius:8px;max-height:220px;overflow:auto;border:1px solid rgba(255,255,255,0.03);display:none;padding:4px}
     #suggestList li{padding:8px;border-radius:6px;list-style:none;cursor:pointer;color:var(--muted)}
-    #suggestList li:hover{background:rgba(255,255,255,255);color:#fff}
+    #suggestList li:hover{background:rgba(0,0,0,0);color:var(--muted)}
     .controls{display:flex;gap:8px;align-items:center}
     main{display:flex;gap:10px;align-items:flex-start}
     /* layout adapted for phone: stack panels */
     @media(min-width:720px){
       main{flex-direction:row}
-      #article{flex:2;min-height:300px;background:var(--green);padding:10px;border-radius:8px}
-      #side{flex:1;min-width:240px;background:var(--green);padding:10px;border-radius:8px;max-height:75vh;overflow:auto}
+      #article{flex:2;min-height:300px;background:var(--panel);padding:10px;border-radius:8px}
+      #side{flex:1;min-width:240px;background:var(--panel);padding:10px;border-radius:8px;max-height:75vh;overflow:auto}
     }
     @media(max-width:719px){
       main{flex-direction:column}
-      #article{width:100%;background:var(--green);padding:10px;border-radius:8px}
+      #article{width:100%;background:var(--panel);padding:10px;border-radius:8px}
       #side{width:100%;background:var(--panel);padding:8px;border-radius:8px}
     }
     h2{margin:6px 0 10px 0;color:#eFFFDf}
@@ -61,8 +61,8 @@
     p{color:var(--muted);line-height:1.4}
     #library{margin-top:8px}
     #libList{list-style:none;padding:0;margin:0;max-height:45vh;overflow:auto}
-    #libList li{padding:8px;border-radius:6px;margin-bottom:6px;background:transparent;border:1px solid rgba(255,255,255,255);cursor:pointer;color:var(--muted)}
-    #libList li:hover{background:rgba(255,255,255,255);color:#ffffff}
+    #libList li{padding:8px;border-radius:6px;margin-bottom:6px;background:transparent;border:1px solid rgba(181, 155,42, 1);cursor:pointer;color:var(--muted)}
+    #libList li:hover{background:rgba(260, 260, 190, 1);color:#b6ab2a}
     .hidden{display:none}
     #libList li:hover, #suggestList li:hover {
   transform: rotate(-3deg) scale(1.05);
@@ -70,7 +70,7 @@
     }
     #aiStatus{font-size:13px;color:var(--muted);margin-left:6px}
     #progressBar{width:100%;height:10px;background:rgba(255,255,255,255);border-radius:6px;overflow:hidden;margin-top:6px}
-    #progressFill{height:100%;background:linear-gradient(90deg,var(--accent-2),var(--accent));width:0%}
+    #progressFill{height:100%;background:linear-gradient(90deg,var(--green),var(--accent));width:0%}
     footer{margin-top:12px;color:var(--muted);font-size:12px;text-align:center}
   </style>
 </head>
@@ -78,38 +78,37 @@
   <div class="app">
     <header>
       <div id="suggestions" style="flex:1;position:relative">
-        <input id="search" type="text" placeholder="Serauchert 😎 Kiwi betebatiya☕☕" autocomplete="off"/>
+        <input id="search" type="text" placeholder="ONLY TYPE KEYWORDS" autocomplete="off"/>
         <ul id="suggestList" Courier New-live="true"></ul>
       </div>
       <div class="controls">
-        <button id="go" class="btn small">serch</button>
-        <button id="libBtn" class="btn secondary small" title="My Library">boo
-          kary🤣</button>
+        <button id="go" class="btn small">search</button>
+        <button id="libBtn" class="btn secondary small" title="My Library">Library</button>
       </div>
       <div id="aiStatus" Courier New-live="polite"></div>
     </header>
 
     <main>
       <section id="article" Courier New-live="polite">
-        <p style="color:var(--muted)"> Sreacher internetia🤗</p>
+        <p style="color:var(--muted)">Results will appear here.</p>
       </section>
 
       <aside id="side">
         <div id="library" class="hidden">
-          <h2>My Librharyy (Sas HartiCles🗂</h2>
+          <h2 style="color:var(--muted);">My Articles</h2>
           <ul id="libList"></ul>
           <div id="aiControls" style="margin-top:8px;display:none">
-            <button id="aiTestBtn" class="btn small">Run OOPSIE tESts</button>
-            <div id="progressBar" class="hidden"><div id="progressF🤕🤪ill"></div></div>
+            <button id="aiTestBtn" class="btn small">Run Ai tests.</button>
+            <div id="progressBar" class="hidden"><div id="Ai tests"></div></div>
           </div>
         </div>
         <div id="help" style="color:var(--muted);font-size:13px">
-          <p><strong>Tbathaga:</strong> Save ArtiCkes TO SE🫤☹️😉E laTher.</p>
+          <p><strong></strong> Save articles to view later.</p>
         </div>
       </aside>
     </main>
 
-    <footer style="color:var(--muted);">wialakile Machavich Secratimino🫥🤯🫨</footer>
+    <footer style="color:var(--muted);">Wikivault Rainbow🫥🤯🫨 ©qwerty123456727</footer>
   </div>
 
 <script>
