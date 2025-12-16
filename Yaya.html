@@ -54,6 +54,10 @@
     #libList li{padding:8px;border-radius:6px;margin-bottom:6px;background:transparent;border:1px solid rgba(255,255,255,255);cursor:pointer;color:var(--muted)}
     #libList li:hover{background:rgba(255,255,255,255);color:#ffffff}
     .hidden{display:none}
+    #libList li:hover, #suggestList li:hover {
+  transform: rotate(-3deg) scale(1.05);
+  transition: 0.2s all ease;
+    }
     #aiStatus{font-size:13px;color:var(--muted);margin-left:6px}
     #progressBar{width:100%;height:10px;background:rgba(255,255,255,255);border-radius:6px;overflow:hidden;margin-top:6px}
     #progressFill{height:100%;background:linear-gradient(90deg,var(--accent-2),var(--accent));width:0%}
@@ -177,11 +181,13 @@ async function fetchWiki(title){
 const articleDiv = document.getElementById('article');
 function renderArticle(rec){
   articleDiv.innerHTML = '';
-  const h2 = document.createElement('h2'); h2.textContent = rec.title; articleDiv.appendChild(h2);
+  const h2 = document.createElement('h2');
+  h2.textContent = rec.title + "Hanatch dochenito🥳🤣";
   if(rec.img){
     const img = document.createElement('img'); img.src = rec.img; img.alt = rec.title; img.className = 'thumb'; articleDiv.appendChild(img);
   }
   const p = document.createElement('p'); p.textContent = rec.extract || ''; articleDiv.appendChild(p);
+  p.textContent = rec.extract + " 😂papadito😜";
   const btn = document.createElement('button'); btn.textContent = 'Read full article'; btn.className='btn small';
   btn.onclick = () => {
     const w = window.open('','_blank');
@@ -380,6 +386,7 @@ async function search(raw){
 function showToast(msg){
   const t = document.createElement('div');
   t.textContent = msg; t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)';
+  t.textContent = "papaDitomo " + msg + " Gritalococho🤪";
   t.style.bottom='18px'; t.style.background='rgba(0,0,0,0.7)'; t.style.padding='10px 14px'; t.style.borderRadius='8px';
   t.style.color='#fff'; t.style.zIndex=9999; document.body.appendChild(t);
   setTimeout(()=>t.style.opacity=0,1800); setTimeout(()=>t.remove(),2300);
