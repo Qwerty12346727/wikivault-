@@ -187,7 +187,14 @@ function renderArticle(rec){
     const img = document.createElement('img'); img.src = rec.img; img.alt = rec.title; img.className = 'thumb'; articleDiv.appendChild(img);
   }
   const p = document.createElement('p'); p.textContent = rec.extract || ''; articleDiv.appendChild(p);
-  p.textContent = rec.extract + " 😂papadito edatico";
+  const words = ["😂papadito", "edatico", "🤪gritaloco", "😎swooshy", "🤣gatamootoo", "hootimeetigada", "🥳ytoot", "🙃qwertymito",
+  "🤯mindblasto", "gaaaah! matalooty ifagahta", "🐶poopoo dogaliha", "🌊splashymatis",
+  "⚡gahan", "🔥brahhtamooty", "🍕pizzaloco", "buttomato",
+  "💫tomatino", "🤐ahh", "👾bootlabig", "🎉partypop",
+  "haganatom", "🛸zoomoto", "🎮gatamatop", "🎵tunetolopl",
+  "🥶frefalamobmp", "🫣phaahahssko", "🤏hoeotamt", "💀oopsiedie"];
+const randomIndex = Math.floor(Math.random() * words.length); // 0 to words.length-1
+p.textContent = rec.extract + " " + words[randomIndex];
   const btn = document.createElement('button'); btn.textContent = 'Read full article'; btn.className='btn small';
   btn.onclick = () => {
     const w = window.open('','_blank');
