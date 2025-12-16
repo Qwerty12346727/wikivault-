@@ -471,7 +471,7 @@ async function search(raw){
 function showToast(msg){
   const t = document.createElement('div');
   t.textContent = msg; t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)';
-  t.textContent = "404 Wikipedia did not give Raigsnbow wkivlt article(&in-alid request or Oggline)";
+  t.textContent = "404 https://www.Wikipedia.org did not respond to <title>Wikivault<\title>(Could not find MATCH: invalid request or 0ffline)";
   t.style.bottom='18px'; t.style.background='rgba(0,0,0,0.7)'; t.style.padding='10px 14px'; t.style.borderRadius='8px';
   t.style.color='#fff'; t.style.zIndex=9999; document.body.appendChild(t);
   setTimeout(()=>t.style.opacity=0,1800); setTimeout(()=>t.remove(),230000);
