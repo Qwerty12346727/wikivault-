@@ -22,6 +22,7 @@ Whether you're studying, exploring, or just curious, Wiki Vault is your secret l
 PS: When searching here search like you would search the Wikipedia🔎!
 
 Find it in https://wikivault.dpdns.org/
+and https://wikivault.dpdns.org/wikivault_rainbow/
 
 ---
 Wiki Vault © 2025 Qwerty12346727 
