@@ -65,9 +65,12 @@
       #article{width:100%;background:var(--panel);padding:10px;border-radius:8px}
       #side{width:100%;background:var(--panel);padding:8px;border-radius:8px}
     }
-    button, input, a {
-  -webkit-tap-highlight-color: transparent;
-    }
+    * {
+    /* Targets every element on the page */
+    -webkit-tap-highlight-color: transparent !important;
+    /* !important ensures this style overrides any browser or inherited default */
+}
+
     h2{margin:6px 0 10px 0;color:#eFFFDf}
     img.thumb{max-width:100%;border-radius:8px;margin:8px 0;display:block}
     p{color:var(--muted);line-height:1.4}
