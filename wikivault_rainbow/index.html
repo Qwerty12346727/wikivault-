@@ -74,10 +74,11 @@
     #libList li:hover{background:rgba(260, 260, 190, 1);color:#b6ab2a}
     .hidden{display:none}
     #libList li:hover, #suggestList li:hover {
+      button, input, a {
+  -webkit-tap-highlight-color: transparent;
+      }
   transform: rotate(-3deg) scale(1.05);
   transition: 0.2s all ease;
-    button, input, a {
-  -webkit-tap-highlight-color: transparent;
     }
     #aiStatus{font-size:13px;color:var(--muted);margin-left:6px}
    
