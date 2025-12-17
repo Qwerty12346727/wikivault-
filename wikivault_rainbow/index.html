@@ -55,6 +55,13 @@
     .controls{display:flex;gap:8px;align-items:center}
     main{display:flex;gap:10px;align-items:flex-start}
     /* layout adapted for phone: stack panels */
+    button:active {
+  transform: scale(0.95) rotate(0deg);
+      color:var(--muted);
+      }
+    button, input, a {
+  -webkit-tap-highlight-color: transparent;
+    }
     @media(min-width:720px){
       main{flex-direction:row}
       #article{flex:2;min-height:300px;background:var(--panel);padding:10px;border-radius:8px}
