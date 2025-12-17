@@ -24,6 +24,8 @@ PS: When searching here search like you would search the Wikipedia🔎!
 Find it in https://wikivault.dpdns.org/
 and https://wikivault.dpdns.org/wikivault_rainbow/
 
+**PS**: funny jokes appear after every search in **Rainbow Wikivault**.
+
 ---
 Wiki Vault © 2025 Qwerty12346727 
 License: Creative Commons Zero (CC0 1.0 Universal)  
