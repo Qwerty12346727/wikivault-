@@ -24,7 +24,7 @@ PS: When searching here search like you would search the Wikipedia🔎!
 Find it in https://wikivault.dpdns.org/
 and https://wikivault.dpdns.org/wikivault_light/
 
-**PS**: funny jokes appear after every search in **Wikivault light**.
+**PS**: funny jokes appear after every search in **Wikivault funny**.
 
 ---
 Wiki Vault © 2025 Qwerty12346727 
