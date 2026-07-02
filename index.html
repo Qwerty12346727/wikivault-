@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +26,6 @@
             min-height: 100vh;
         }
 
-        /* Top Navigation Bar */
         .navbar {
             background-color: var(--card-bg);
             border-bottom: 1px solid var(--border-color);
@@ -34,6 +34,278 @@
             justify-content: space-between;
             align-items: center;
         }
+
+        .navbar h1 {
+            font-size: 20px;
+            margin: 0;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar h1 span {
+            color: var(--accent-green);
+        }
+
+        #time-display {
+            font-family: monospace;
+            font-size: 14px;
+            color: #8b949e;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 30px auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .col-4 { grid-column: span 4; }
+        .col-8 { grid-column: span 8; }
+        .col-12 { grid-column: span 12; }
+
+        @media (max-width: 900px) {
+            .col-4, .col-8, .col-12 { grid-column: span 12; }
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .folder-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .folder-link {
+            background-color: #21262d;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .folder-link:hover {
+            border-color: var(--accent-green);
+            background-color: #26352b;
+            color: #ffffff;
+        }
+
+        .folder-link::after {
+            content: "➔";
+            color: var(--accent-green);
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #0d1117;
+            border: 1px solid var(--border-color);
+            color: #ffffff;
+            border-radius: 6px;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+            font-family: inherit;
+        }
+
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        button {
+            background-color: var(--accent-green);
+            color: #ffffff;
+            border: 1px solid rgba(240,246,252,0.1);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: var(--accent-green-hover);
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 15px 0 0 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        li {
+            padding: 10px;
+            background-color: #0d1117;
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .delete-btn {
+            background-color: transparent;
+            color: #f85149;
+            border: none;
+            padding: 4px 8px;
+            cursor: pointer;
+            width: auto;
+            font-weight: bold;
+        }
+
+        .delete-btn:hover {
+            background-color: rgba(248, 81, 73, 0.1);
+            border-radius: 4px;
+        }
+
+        .release-button {
+            background-color: #238636;
+            color: #ffffff;
+            border: 1px solid #30363d;
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .release-button:hover {
+            background-color: #2ea44f;
+            border-color: #8b949e;
+        }
+
+        .release-button::after {
+            content: "🚀";
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h1><span>🔑</span> Wikivault Dashboard</h1>
+    <div id="time-display">00:00:00</div>
+</div>
+
+<div class="dashboard-container">
+    <div class="dashboard-grid">
+        
+        <div class="card col-4">
+            <h2>Wikivault Variants</h2>
+            <div class="folder-list">
+                <a href="funny/index.html" class="folder-link">Wikivault Funny</a>
+                <a href="original/index.html" class="folder-link">Wikivault Original</a>
+                <a href="wikivault_light/index.html" class="folder-link">Wikivault Light</a>
+                <a href="https://github.com/Qwerty12346727/SHA-2048" target="_blank" class="release-button">MY NEW RELEASE SHA-2048</a>
+            </div>
+        </div>
+
+        <div class="card col-8">
+            <h2>Quick Notes</h2>
+            <textarea id="scratchpad" rows="7" placeholder="Type quick logs or thoughts here... (Saves automatically to browser memory)"></textarea>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // System Clock
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('time-display').innerText = now.toLocaleString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Auto-save Scratchpad
+    const scratchpad = document.getElementById('scratchpad');
+    scratchpad.value = localStorage.getItem('wiki_scratchpad') || '';
+    scratchpad.addEventListener('input', () => {
+        localStorage.setItem('wiki_scratchpad', scratchpad.value);
+    });
+
+    // Vault Data Management
+    let vaultItems = JSON.parse(localStorage.getItem('wiki_vault_items')) || [];
+
+    function displayItems() {
+        const list = document.getElementById('vault-list');
+        if (!list) return; // Guard clause in case element isn't in current view
+        list.innerHTML = '';
+        vaultItems.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${item}</span>
+                <button class="delete-btn" onclick="deleteItem(${index})">Remove</button>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    function addVaultItem() {
+        const input = document.getElementById('vault-input');
+        if (input && input.value.trim() !== '') {
+            vaultItems.push(input.value.trim());
+            localStorage.setItem('wiki_vault_items', JSON.stringify(vaultItems));
+            input.value = '';
+            displayItems();
+        }
+    }
+
+    function deleteItem(index) {
+        vaultItems.splice(index, 1);
+        localStorage.setItem('wiki_vault_items', JSON.stringify(vaultItems));
+        displayItems();
+    }
+
+    // Initialize list data
+    displayItems();
+</script>
+
+</body>
+</html>
+
+
 
         .navbar h1 {
             font-size: 20px;
